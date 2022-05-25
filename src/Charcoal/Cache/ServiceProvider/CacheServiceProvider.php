@@ -51,7 +51,7 @@ class CacheServiceProvider implements ServiceProviderInterface
     public function register(Container$container)
     {
         $this->registerDrivers($container);
-        $this->registerService($container);
+        $this->registerServices($container);
         $this->registerMiddleware($container);
     }
 
@@ -192,7 +192,7 @@ class CacheServiceProvider implements ServiceProviderInterface
      * @param  Container $container A container instance.
      * @return void
      */
-    public function registerService(Container $container)
+    public function registerServices(Container $container)
     {
         /**
          * The cache configset.
@@ -275,7 +275,7 @@ class CacheServiceProvider implements ServiceProviderInterface
      * @param  Container $container A container instance.
      * @return void
      */
-    private function registerMiddleware(Container $container)
+    protected function registerMiddleware(Container $container)
     {
         /**
          * The middleware for caching HTTP responses.
