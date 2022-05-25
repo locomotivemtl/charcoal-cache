@@ -76,7 +76,7 @@ If you are using [_locomotivemtl/charcoal-app_][charcoal-app], the [`CacheServic
 
 #### Required
 
--   [**PHP 5.6+**](https://php.net): _PHP 7_ is recommended.
+-   [**PHP 7.3+**](https://php.net)
 -   [**tedivm/stash**][stash]: PSR-6 compliant caching library.
 -   [**pimple/pimple**][pimple]: PSR-11 compliant service container and provider library.
 -   [**locomotivemtl/charcoal-config**][charcoal-config]: For configuring the caching service.
@@ -357,9 +357,9 @@ The charcoal-cache module follows the Charcoal coding-style:
 [phpunit]:          https://packagist.org/packages/phpunit/phpunit
 [phpcs]:            https://packagist.org/packages/squizlabs/php_codesniffer
 [phpcov]:           https://packagist.org/packages/php-coveralls/php-coveralls
-[stash-drivers]:    https://github.com/tedious/Stash/blob/v0.14.2/src/Stash/DriverList.php
+[stash-drivers]:    https://github.com/tedious/Stash/blob/v0.17.2/src/Stash/DriverList.php
 [stash-docs]:       https://www.stashphp.com/
-[stash-license]:    https://github.com/tedious/Stash/blob/v0.14.2/LICENSE
+[stash-license]:    https://github.com/tedious/Stash/blob/v0.17.2/LICENSE
 
 [dev-scrutinizer]:    https://scrutinizer-ci.com/g/locomotivemtl/charcoal-cache/
 [dev-coveralls]:      https://coveralls.io/r/locomotivemtl/charcoal-cache
