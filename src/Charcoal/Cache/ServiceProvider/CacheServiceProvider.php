@@ -64,9 +64,11 @@ class CacheServiceProvider implements ServiceProviderInterface
         /**
          * The collection of cache drivers that are supported by this system.
          *
-         * @var array An associative array structured as `"Driver Name" => "Class Name"`.
+         * @var array<string, string> An associative array formatted as `"Driver Name" => "Class Name"`.
          */
-        $container['cache/available-drivers'] = DriverList::getAvailableDrivers();
+        $container['cache/available-drivers'] = $container->factory(function () {
+            return DriverList::getAvailableDrivers();
+        });
 
         /**
          * The collection of cache driver instances.
