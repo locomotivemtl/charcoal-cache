@@ -2,20 +2,24 @@
 
 namespace Charcoal\Cache\ServiceProvider;
 
+use Exception;
+
 // From Pimple
-use Charcoal\Cache\Facade\CachePoolFacade;
 use Pimple\ServiceProviderInterface;
 use Pimple\Container;
 
 // From 'tedivm/stash'
-use Stash\DriverList;
 use Stash\Interfaces\DriverInterface;
+use Stash\Interfaces\PoolInterface;
 use Stash\Pool;
 
 // From 'charcoal-cache'
 use Charcoal\Cache\CacheBuilder;
 use Charcoal\Cache\CacheConfig;
+use Charcoal\Cache\Facade\CachePoolFacade;
+use Charcoal\Cache\Factory\DriverFactory;
 use Charcoal\Cache\Middleware\CacheMiddleware;
+use Charcoal\Cache\Service\DriverList;
 
 /**
  * Cache Service Provider
@@ -69,6 +73,15 @@ class CacheServiceProvider implements ServiceProviderInterface
         $container['cache/available-drivers'] = $container->factory(function () {
             return DriverList::getAvailableDrivers();
         });
+
+        /**
+         * The cache driver factory, using Stash.
+         *
+         * @return DriverFactory
+         */
+        $container['cache/driver/factory'] = function () {
+            return new DriverFactory();
+        };
 
         /**
          * The collection of cache driver instances.
@@ -195,18 +208,6 @@ class CacheServiceProvider implements ServiceProviderInterface
     public function registerServices(Container $container)
     {
         /**
-         * The cache configset.
-         *
-         * @param  Container $container The service container.
-         * @return CacheConfig
-         */
-        $container['cache/config'] = function (Container $container) {
-            $appConfig   = isset($container['config']) ? $container['config'] : [];
-            $cacheConfig = isset($appConfig['cache']) ? $appConfig['cache'] : null;
-            return new CacheConfig($cacheConfig);
-        };
-
-        /**
          * A cache pool builder, using Stash.
          *
          * @param  Container $container A Pimple DI container.
@@ -220,6 +221,18 @@ class CacheServiceProvider implements ServiceProviderInterface
                 'drivers'    => $container['cache/drivers'],
                 'namespace'  => $cacheConfig['prefix'],
             ]);
+        };
+
+        /**
+         * The cache configset.
+         *
+         * @param  Container $container The service container.
+         * @return CacheConfig
+         */
+        $container['cache/config'] = function (Container $container) {
+            $appConfig   = isset($container['config']) ? $container['config'] : [];
+            $cacheConfig = isset($appConfig['cache']) ? $appConfig['cache'] : null;
+            return new CacheConfig($cacheConfig);
         };
 
         /**
@@ -296,5 +309,42 @@ class CacheServiceProvider implements ServiceProviderInterface
             }
             return new CacheMiddleware($wareConfig);
         };
+    }
+
+    /**
+     * @param  string      $name      Cache identifier.
+     * @param  CacheConfig $config    Cache options.
+     * @param  Container   $container The service container.
+     * @return PoolInterface
+     */
+    protected function addCacheService($name, CacheConfig $config, Container $container)
+    {
+        $cacheBuilder = $container['cache/builder'];
+
+        if ($config['active'] === true) {
+            $cacheDrivers = $config['types'];
+        } else {
+            $cacheDrivers = $config['default_types'];
+        }
+
+        return $cacheBuilder($cacheDrivers);
+    }
+
+    /**
+     * Merges cache definitions for pre-v0.3 ("config.cache") and post-v0.3 ("config.caches").
+     *
+     * @param  Container $container A container instance.
+     * @return array<string, (array|CacheConfig)>
+     */
+    protected function getCacheDefinitionsFromContainer(Container $container)
+    {
+        $appConfig = ($container['config'] ?? []);
+        $caches    = ($appConfig['caches'] ?? []);
+
+        if (!isset($caches['default']) && isset($appConfig['cache'])) {
+            $caches['default'] = $appConfig['cache'];
+        }
+
+        return $caches;
     }
 }
