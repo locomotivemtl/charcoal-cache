@@ -18,7 +18,7 @@ class CacheConfig extends AbstractConfig
      * Default cache type and fallback for user preference.
      */
     const DEFAULT_TYPES = [
-        'memory' => true
+        'memory' => true,
     ];
 
     /**
@@ -71,9 +71,9 @@ class CacheConfig extends AbstractConfig
     {
         return [
             'active'      => true,
-            'types'       => $this->defaultTypes(),
+            'types'       => $this->getDefaultTypes(),
             'default_ttl' => self::WEEK_IN_SECONDS,
-            'prefix'      => self::DEFAULT_NAMESPACE
+            'prefix'      => self::DEFAULT_NAMESPACE,
         ];
     }
 
@@ -95,7 +95,7 @@ class CacheConfig extends AbstractConfig
      *
      * @return boolean TRUE if enabled, FALSE if disabled.
      */
-    public function active()
+    public function getActive()
     {
         return $this->active;
     }
@@ -138,7 +138,7 @@ class CacheConfig extends AbstractConfig
      */
     public function addType($type)
     {
-        if (!in_array($type, $this->validTypes())) {
+        if (!in_array($type, $this->getValidTypes())) {
             throw new InvalidArgumentException(
                 sprintf('Invalid cache type: "%s"', $type)
             );
@@ -157,7 +157,7 @@ class CacheConfig extends AbstractConfig
      *
      * @return array
      */
-    public function types()
+    public function getTypes()
     {
         $types = $this->types + self::DEFAULT_TYPES;
         return array_keys($types);
@@ -168,7 +168,7 @@ class CacheConfig extends AbstractConfig
      *
      * @return string[]
      */
-    public function defaultTypes()
+    public function getDefaultTypes()
     {
         return array_keys(self::DEFAULT_TYPES);
     }
@@ -178,7 +178,7 @@ class CacheConfig extends AbstractConfig
      *
      * @return string[]
      */
-    public function validTypes()
+    public function getValidTypes()
     {
         return [
             'apc',
@@ -215,7 +215,7 @@ class CacheConfig extends AbstractConfig
      *
      * @return integer
      */
-    public function defaultTtl()
+    public function getDefaultTtl()
     {
         return $this->defaultTtl;
     }
@@ -251,7 +251,7 @@ class CacheConfig extends AbstractConfig
      *
      * @return string
      */
-    public function prefix()
+    public function getPrefix()
     {
         return $this->prefix;
     }
